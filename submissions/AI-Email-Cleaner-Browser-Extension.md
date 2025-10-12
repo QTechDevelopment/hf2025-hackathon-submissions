@@ -65,6 +65,8 @@ e.g.:
 ## Project Repo  
 _Share a public repo link of your project_
 
+https://github.com/QTechDevelopment/hf2025-hackathon-submissions/tree/main/extension
+
 <!--
 https://github.com/your-username/ai-email-cleaner-extension
 -->
