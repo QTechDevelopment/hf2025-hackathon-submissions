@@ -25,6 +25,7 @@ We've created a comprehensive design system combining **Liquid Glass (Glassmorph
 
 ### 📚 Design Resources
 
+- **[Quick Start Guide](DESIGN_SYSTEM_QUICKSTART.md)** - Get started in minutes
 - **[UI/UX Design Guide](UI_UX_DESIGN.md)** - Complete design system documentation
 - **[Live Demo](demo-design.html)** - Interactive showcase of components and styles
 - **[CSS Framework](demo-design.css)** - Ready-to-use styles for your project
