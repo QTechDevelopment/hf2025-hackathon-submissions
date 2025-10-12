@@ -1,0 +1,43 @@
+{
+  "name": "ai-email-cleaner-extension",
+  "version": "1.0.0",
+  "description": "AI-powered Gmail extension using Gemini AI for intelligent email cleanup",
+  "main": "popup/popup.js",
+  "scripts": {
+    "dev": "echo 'Load extension from chrome://extensions in developer mode'",
+    "build": "node scripts/build.js",
+    "package": "npm run build && cd dist && zip -r ../ai-email-cleaner.zip .",
+    "lint": "eslint popup/*.js scripts/*.js",
+    "format": "prettier --write '**/*.{js,html,css,json,md}'",
+    "deploy-function": "cd appwrite-functions/gemini-analyzer && npm install && appwrite deploy function",
+    "test": "echo 'No automated tests yet. Manual testing required.'"
+  },
+  "keywords": [
+    "gmail",
+    "email",
+    "ai",
+    "gemini",
+    "cleanup",
+    "chrome-extension",
+    "appwrite",
+    "productivity"
+  ],
+  "author": "Your Name",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/QTechDevelopment/hf2025-hackathon-submissions.git"
+  },
+  "bugs": {
+    "url": "https://github.com/QTechDevelopment/hf2025-hackathon-submissions/issues"
+  },
+  "homepage": "https://github.com/QTechDevelopment/hf2025-hackathon-submissions/tree/main/extension",
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.3"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  }
+}
