@@ -1,0 +1,134 @@
+/* Additional styles for content script */
+
+.ai-email-cleaner-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10001;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  max-width: 500px;
+  width: 90%;
+}
+
+.ai-email-cleaner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+}
+
+.ai-cleaner-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.ai-cleaner-action-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.2s;
+  margin: 2px;
+}
+
+.ai-cleaner-action-btn:hover {
+  background: #5568d3;
+}
+
+.ai-cleaner-action-btn.danger {
+  background: #ef4444;
+}
+
+.ai-cleaner-action-btn.danger:hover {
+  background: #dc2626;
+}
+
+.ai-cleaner-toast {
+  position: fixed;
+  bottom: 80px;
+  right: 30px;
+  z-index: 10002;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 300px;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.ai-cleaner-toast.success {
+  border-left: 4px solid #10b981;
+}
+
+.ai-cleaner-toast.error {
+  border-left: 4px solid #ef4444;
+}
+
+.ai-cleaner-toast.info {
+  border-left: 4px solid #667eea;
+}
+
+.ai-cleaner-toast-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.ai-cleaner-toast-content {
+  flex: 1;
+}
+
+.ai-cleaner-toast-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #1f2937;
+}
+
+.ai-cleaner-toast-message {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.ai-cleaner-spinner {
+  border: 3px solid #f3f4f6;
+  border-top: 3px solid #667eea;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

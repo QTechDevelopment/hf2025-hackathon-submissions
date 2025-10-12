@@ -1,0 +1,22 @@
+{
+  "name": "gemini-analyzer",
+  "version": "1.0.0",
+  "description": "Appwrite Function to analyze emails using Gemini AI",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "appwrite",
+    "gemini",
+    "email",
+    "ai",
+    "cleanup"
+  ],
+  "author": "",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "node-appwrite": "^12.0.0"
+  }
+}

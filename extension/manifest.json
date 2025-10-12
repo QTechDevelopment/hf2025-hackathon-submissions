@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "AI Email Cleaner - Gemini Powered",
+  "version": "1.0.0",
+  "description": "Clean up your Gmail inbox intelligently using Gemini AI based on natural language prompts",
+  "permissions": [
+    "storage",
+    "identity",
+    "https://mail.google.com/*",
+    "https://www.googleapis.com/*"
+  ],
+  "host_permissions": [
+    "https://mail.google.com/*",
+    "https://*.appwrite.global/*"
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["scripts/content.js"],
+      "css": ["styles/content.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "oauth2": {
+    "client_id": "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/gmail.modify",
+      "https://www.googleapis.com/auth/gmail.readonly"
+    ]
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

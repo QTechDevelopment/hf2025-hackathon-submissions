@@ -1,0 +1,46 @@
+# Environment and configuration files
+.env
+config.local.js
+secrets.json
+
+# API Keys (never commit these!)
+*api-key*
+*secret*
+*.pem
+*.key
+
+# Node modules
+node_modules/
+package-lock.json
+
+# Build artifacts
+dist/
+build/
+*.zip
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+Thumbs.db
+desktop.ini
+
+# Test coverage
+coverage/
+
+# Appwrite CLI
+.appwrite/

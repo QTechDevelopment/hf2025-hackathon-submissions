@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Email Cleaner</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🤖 AI Email Cleaner</h1>
+      <p class="subtitle">Powered by Gemini AI</p>
+    </header>
+
+    <div id="auth-section" class="section">
+      <button id="login-btn" class="btn btn-primary">Login with Google</button>
+      <button id="appwrite-login-btn" class="btn btn-secondary">Login with Appwrite</button>
+    </div>
+
+    <div id="main-section" class="section hidden">
+      <div class="user-info">
+        <span id="user-email"></span>
+        <button id="logout-btn" class="btn btn-small">Logout</button>
+      </div>
+
+      <div class="prompt-section">
+        <label for="cleanup-prompt">Tell AI what emails to clean up:</label>
+        <textarea 
+          id="cleanup-prompt" 
+          placeholder="e.g., 'Delete all promotional emails older than 3 months' or 'Archive newsletters from last year'"
+          rows="4"
+        ></textarea>
+        
+        <div class="options">
+          <label>
+            <input type="checkbox" id="preview-mode" checked>
+            Preview mode (show what will be deleted before confirming)
+          </label>
+        </div>
+
+        <button id="analyze-btn" class="btn btn-primary">Analyze Emails</button>
+      </div>
+
+      <div id="results-section" class="results hidden">
+        <h3>Analysis Results</h3>
+        <div id="summary" class="summary"></div>
+        <div id="email-list" class="email-list"></div>
+        <div class="actions">
+          <button id="execute-btn" class="btn btn-primary">Execute Cleanup</button>
+          <button id="cancel-btn" class="btn btn-secondary">Cancel</button>
+        </div>
+      </div>
+
+      <div id="progress-section" class="progress hidden">
+        <div class="progress-bar">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        <p id="progress-text">Processing emails...</p>
+      </div>
+    </div>
+
+    <div id="error-section" class="error hidden"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

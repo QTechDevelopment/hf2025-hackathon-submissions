@@ -1,0 +1,96 @@
+{
+  "projectId": "YOUR_PROJECT_ID",
+  "projectName": "AI Email Cleaner",
+  "functions": [
+    {
+      "name": "gemini-analyzer",
+      "runtime": "node-18.0",
+      "path": "appwrite-functions/gemini-analyzer",
+      "entrypoint": "main.js",
+      "execute": ["any"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "scopes": [
+        "databases.read",
+        "databases.write"
+      ],
+      "variables": {
+        "GEMINI_API_KEY": "",
+        "APPWRITE_DATABASE_ID": "default",
+        "APPWRITE_COLLECTION_ID": "analyses"
+      }
+    }
+  ],
+  "databases": [
+    {
+      "name": "EmailCleanerDB",
+      "$id": "default",
+      "collections": [
+        {
+          "name": "analyses",
+          "$id": "analyses",
+          "enabled": true,
+          "documentSecurity": true,
+          "attributes": [
+            {
+              "key": "userId",
+              "type": "string",
+              "required": true,
+              "size": 255
+            },
+            {
+              "key": "prompt",
+              "type": "string",
+              "required": true,
+              "size": 1000
+            },
+            {
+              "key": "totalEmails",
+              "type": "integer",
+              "required": true
+            },
+            {
+              "key": "matchedCount",
+              "type": "integer",
+              "required": true
+            },
+            {
+              "key": "action",
+              "type": "string",
+              "required": true,
+              "size": 50
+            },
+            {
+              "key": "summary",
+              "type": "string",
+              "required": true,
+              "size": 2000
+            },
+            {
+              "key": "timestamp",
+              "type": "datetime",
+              "required": true
+            }
+          ],
+          "indexes": [
+            {
+              "key": "userId_idx",
+              "type": "key",
+              "attributes": ["userId"],
+              "orders": ["ASC"]
+            },
+            {
+              "key": "timestamp_idx",
+              "type": "key",
+              "attributes": ["timestamp"],
+              "orders": ["DESC"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
