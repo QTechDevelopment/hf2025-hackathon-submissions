@@ -2,7 +2,7 @@
 // Handles authentication and Gmail API operations
 
 // Import gmailClient functions
-importScripts('src/gmailClient.js');
+importScripts('gmailClient.js');
 
 // Configuration - Update with your server URL
 const AI_SERVER_URL = 'http://localhost:3000'; // Update this to your deployed server URL
