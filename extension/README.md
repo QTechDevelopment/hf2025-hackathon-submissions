@@ -1,16 +1,38 @@
 # AI Email Cleaner - Gmail Extension with Gemini AI
 
-A powerful browser extension that helps you intelligently clean up your Gmail inbox using Google's Gemini AI. Simply describe what emails you want to clean up in natural language, and let AI do the work!
+A powerful browser extension that helps you intelligently clean up your Gmail inbox using AI. Simply describe what emails you want to clean up in natural language, preview matches, and let AI suggest replies before cleaning up!
 
 ## Features
 
-- 🤖 **AI-Powered Analysis**: Uses Google Gemini AI to understand your cleanup requests in natural language
+- 🤖 **AI-Powered Analysis**: Uses AI to understand your cleanup requests in natural language
 - 📧 **Gmail Integration**: Seamlessly connects with Gmail API for email access
-- 🔍 **Preview Mode**: Review emails before taking action
-- 🗑️ **Multiple Actions**: Delete, archive, or mark emails as read
-- 🔒 **Secure Authentication**: Uses OAuth 2.0 for secure Gmail access
-- 💾 **History Tracking**: Stores your cleanup history in Appwrite Database
-- ⚡ **Fast Processing**: Batch processes emails efficiently
+- 🔍 **Staging Preview**: Review and select specific emails before taking action (non-destructive preview)
+- 💬 **AI-Suggested Replies**: Get intelligent reply suggestions for emails before cleanup
+- ✉️ **Draft Creation**: Create draft replies directly from suggestions
+- 🗑️ **Multiple Actions**: Delete, archive, mark as read, or apply custom labels
+- 🏷️ **Custom Labels**: Create and apply custom labels to matched emails
+- 🔒 **Secure Authentication**: Uses OAuth 2.0 for secure Gmail access with gmail.send permission
+- ⚡ **Fast Processing**: Batch processes emails efficiently (up to 50 emails per preview)
+
+## New in Version 0.2.0
+
+### Staging Preview
+- **Non-destructive preview**: View matched emails before executing any actions
+- **Selective execution**: Choose which specific messages to act on using checkboxes
+- **Action override**: Manually select action (delete/archive/mark_read/label) instead of auto-detection
+- **Custom labels**: Create and apply custom Gmail labels to matched messages
+
+### AI-Suggested Replies
+- **Smart suggestions**: AI analyzes your emails and suggests 3-5 appropriate replies
+- **Copy to clipboard**: Quickly copy suggested text for manual replies
+- **Create drafts**: Automatically create Gmail drafts with suggested replies for selected messages
+- **Sample-based analysis**: Suggestions based on first 5 matched messages for efficiency
+
+### Server AI Proxy
+- **New endpoint**: `/ai/suggestReplies` generates intelligent reply suggestions
+- **Existing endpoint**: `/ai/parse` converts natural language to Gmail queries
+- **Provider flexibility**: Configured for Azure OpenAI but supports Gemini and other providers
+- **Security**: All API keys stored server-side, never exposed in extension
 
 ## Installation
 
@@ -38,39 +60,56 @@ cd ai-email-cleaner-extension
 4. Create OAuth 2.0 credentials:
    - Application type: Chrome Extension
    - Add your extension ID (you'll get this after loading the extension)
-5. Download the OAuth client configuration
+5. **Important**: Add the following OAuth scopes:
+   - `https://www.googleapis.com/auth/gmail.modify` (read and modify Gmail)
+   - `https://www.googleapis.com/auth/gmail.readonly` (read Gmail)
+   - `https://www.googleapis.com/auth/gmail.send` (send and create drafts) **NEW in v0.2.0**
+6. Download the OAuth client configuration
 
-#### 3. Configure Appwrite
+#### 3. Deploy AI Proxy Server
 
-1. Create a new project in [Appwrite Console](https://cloud.appwrite.io)
-2. Enable Authentication (OAuth providers)
-3. Create a Database with these collections:
-   - `analyses`: Store email analysis history
-     - userId (string)
-     - prompt (string)
-     - totalEmails (integer)
-     - matchedCount (integer)
-     - action (string)
-     - summary (string)
-     - timestamp (datetime)
+The extension requires a server to handle AI requests (keeps API keys secure):
 
-4. Create a Function:
-   - Name: `gemini-analyzer`
-   - Runtime: Node.js 18
-   - Upload the code from `appwrite-functions/gemini-analyzer/`
-   - Set environment variables:
-     - `GEMINI_API_KEY`: Your Gemini API key
-     - `APPWRITE_DATABASE_ID`: Your database ID
-     - `APPWRITE_COLLECTION_ID`: Your collection ID
+1. Navigate to the server directory:
+```bash
+cd extension/server
+```
 
-#### 4. Update Configuration
+2. Install dependencies:
+```bash
+npm install
+```
 
-Edit `popup/popup.js` and update these constants:
+3. Create `.env` file from example:
+```bash
+cp .env.example .env
+```
+
+4. Configure your AI provider in `.env`:
+```bash
+# For Azure OpenAI
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
+AZURE_OPENAI_API_KEY=your-api-key
+AZURE_OPENAI_DEPLOYMENT=gpt-4
+AZURE_API_VERSION=2024-02-15-preview
+
+# Or use another provider (Gemini, OpenAI, etc.)
+```
+
+5. Run the server:
+```bash
+npm start
+# Server will run on http://localhost:3000
+```
+
+6. For production, deploy to a cloud service (Heroku, Railway, Render, etc.) and update the `AI_SERVER_URL` in both `src/popup.js` and `src/background.js`
+
+#### 4. Configure Extension Files
+
+Edit `src/popup.js` and `src/background.js` to update the AI server URL:
 
 ```javascript
-const APPWRITE_ENDPOINT = 'https://cloud.appwrite.io/v1';
-const APPWRITE_PROJECT_ID = 'your-project-id';
-const APPWRITE_FUNCTION_ID = 'your-function-id';
+const AI_SERVER_URL = 'https://your-deployed-server.com'; // Update this
 ```
 
 Edit `manifest.json` and update:
@@ -80,7 +119,8 @@ Edit `manifest.json` and update:
   "client_id": "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
   "scopes": [
     "https://www.googleapis.com/auth/gmail.modify",
-    "https://www.googleapis.com/auth/gmail.readonly"
+    "https://www.googleapis.com/auth/gmail.readonly",
+    "https://www.googleapis.com/auth/gmail.send"
   ]
 }
 ```
@@ -96,27 +136,58 @@ Edit `manifest.json` and update:
 
 ## Usage
 
-### Basic Usage
+### Basic Staging Preview Workflow
 
-1. Click the extension icon in your browser toolbar
-2. Log in with your Google account
-3. Enter a natural language prompt describing what emails to clean up, for example:
+1. **Authenticate**: Click the extension icon and click "Authenticate with Gmail"
+2. **Enter Command**: Describe what emails you want to manage:
    - "Delete all promotional emails older than 3 months"
    - "Archive newsletters from last year"
-   - "Mark all unread emails from LinkedIn as read"
-   - "Delete emails from no-reply addresses older than 6 months"
+   - "Mark all unread LinkedIn emails as read"
+   - "Label receipts from Amazon as 'Receipts'"
 
-4. Click "Analyze Emails" to see what will be affected
-5. Review the preview list
-6. Click "Execute Cleanup" to perform the action
+3. **Preview Matches**: Click "Preview Matches" to see:
+   - List of matched emails with checkboxes
+   - Parsed action and Gmail query
+   - AI-suggested reply options (if applicable)
 
-### Advanced Usage
+4. **Select Messages**: Use checkboxes to select/deselect specific messages
 
-- **Preview Mode**: Keep preview mode enabled to always review before executing
-- **Gmail Integration**: The floating "AI Clean" button appears on Gmail pages for quick access
-- **Custom Prompts**: Be specific with your cleanup criteria for better results
+5. **Review Suggestions**: Review AI-generated reply suggestions
+   - Click "Copy" to copy suggestion text
+   - Click "Create Drafts" to create Gmail drafts for selected messages
 
-## Example Prompts
+6. **Execute**: Click "Confirm & Execute" to perform the action on selected messages
+
+### Advanced Features
+
+#### Manual Action Override
+Instead of letting AI detect the action, you can manually select:
+- Delete
+- Archive
+- Mark as Read
+- Add Label (with custom label name)
+
+#### Creating Draft Replies
+1. Preview your emails
+2. Review AI suggestions in the "AI-Suggested Replies" section
+3. Select messages you want to reply to (using checkboxes)
+4. Click "Create Drafts" on your preferred suggestion
+5. Drafts will be created in Gmail for manual review before sending
+
+#### Custom Labels
+1. Select "Add Label" from the action dropdown
+2. Enter your desired label name
+3. The extension will create the label if it doesn't exist
+4. Selected messages will be tagged with the label
+
+### Security Best Practices
+
+- **Non-destructive preview**: Always review matched messages before executing
+- **No auto-send**: Drafts are created but never automatically sent
+- **Selective execution**: Choose exactly which messages to act on
+- **Server-side AI**: API keys never exposed in the extension
+
+## Example Commands
 
 ```
 ✅ Delete all promotional emails older than 6 months
@@ -124,6 +195,7 @@ Edit `manifest.json` and update:
 ✅ Mark all LinkedIn notifications as read
 ✅ Delete emails with unsubscribe links older than 3 months
 ✅ Archive all automated reports from last year
+✅ Label all receipts from Amazon as 'Receipts'
 ✅ Delete all social media notifications older than 1 month
 ```
 
@@ -131,45 +203,71 @@ Edit `manifest.json` and update:
 
 ### Components
 
-1. **Extension Frontend** (`popup/`)
-   - User interface for prompts and email management
+1. **Extension Frontend** (`src/`)
+   - `popup.html` - Staging UI with preview pane and suggestions
+   - `popup.js` - Logic for preview, selection, and draft creation
+   - `popup.css` - Gradient theme styling
    - OAuth authentication flow
    - Gmail API integration
 
-2. **Content Script** (`scripts/content.js`)
+2. **Background Service Worker** (`src/background.js`)
+   - Manages OAuth authentication state
+   - Handles message passing between popup and APIs
+   - Implements preview and execute flows
+   - Calls Gmail API for operations (list, modify, create drafts)
+
+3. **Gmail Client Helper** (`src/gmailClient.js`)
+   - `listMessageIds()` - Search Gmail with queries
+   - `getMessageDetails()` - Fetch message metadata in chunks
+   - `batchModify()` - Perform bulk operations
+   - `ensureLabelExists()` - Create/lookup custom labels
+   - `createDraftReply()` - Create draft emails with proper MIME encoding
+
+4. **AI Proxy Server** (`server/`)
+   - `POST /ai/parse` - Parse natural language commands into Gmail queries
+   - `POST /ai/suggestReplies` - Generate reply suggestions from sample messages
+   - Azure OpenAI integration (swappable with Gemini or others)
+   - Keeps API keys secure server-side
+
+5. **Content Script** (`scripts/content.js`)
    - Runs on Gmail pages
    - Provides floating action button
-   - Highlights emails in preview mode
-
-3. **Background Service Worker** (`scripts/background.js`)
-   - Manages authentication state
-   - Handles message passing
-   - Performs email actions via Gmail API
-
-4. **Appwrite Function** (`appwrite-functions/gemini-analyzer/`)
-   - Receives emails and user prompt
-   - Calls Gemini AI for analysis
-   - Returns matched emails and recommended actions
-   - Stores analysis history
+   - Highlights emails in preview mode (optional)
 
 ### Data Flow
 
 ```
-User Input → Extension → Gmail API (fetch emails)
-                    ↓
-            Appwrite Function → Gemini AI (analyze)
-                    ↓
-            Extension ← Analysis Results
-                    ↓
-            Gmail API (perform actions)
+1. Preview Flow (Non-destructive):
+   User Command → AI Server (/ai/parse) → Parsed Query
+                              ↓
+   Background Worker → Gmail API (list messages) → Message IDs
+                              ↓
+   Background Worker → Gmail API (get details) → Message Metadata
+                              ↓
+   Background Worker → AI Server (/ai/suggestReplies) → Suggestions
+                              ↓
+   Popup UI ← Preview Data (parsed, messages, suggestions)
+
+2. Execute Flow (Destructive):
+   User Confirms → Background Worker → Gmail API (batch modify)
+                              ↓
+   Result ← Success/Failure Counts
+
+3. Draft Creation Flow:
+   Selected Messages + Suggestion → Background Worker
+                              ↓
+   For each message: Gmail API (create draft) → Draft Created
 ```
 
 ## Privacy & Security
 
-- **No Data Storage**: Emails are never stored, only analyzed in real-time
+- **No Email Storage**: Emails are never stored, only analyzed in real-time (up to 50 messages previewed)
 - **OAuth Security**: Uses Google's secure OAuth 2.0 for authentication
-- **User Control**: All actions require explicit user confirmation
-- **Appwrite Security**: All API calls are authenticated and rate-limited
+- **User Control**: All destructive actions require explicit user confirmation
+- **Selective Execution**: Users choose exactly which messages to act on via checkboxes
+- **Server-side API Keys**: AI API keys kept secure on server, never in extension code
+- **Draft-Only Replies**: Suggested replies create drafts, never auto-send
+- **Minimal Scopes**: Only requests necessary Gmail permissions (modify, readonly, send)
 - **Open Source**: Full source code available for review
 
 ## Development
